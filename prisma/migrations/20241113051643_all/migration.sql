@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE `Accounts` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `user_id` INTEGER NOT NULL,
-    `account_number` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `accountNumber` VARCHAR(191) NOT NULL,
     `balance` BIGINT NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -11,14 +11,14 @@ CREATE TABLE `Accounts` (
 -- CreateTable
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `fullname` VARCHAR(191) NOT NULL,
-    `username` VARCHAR(191) NOT NULL,
+    `fullName` VARCHAR(191) NOT NULL,
+    `userName` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `email_verified_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `User_username_key`(`username`),
+    UNIQUE INDEX `User_userName_key`(`userName`),
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -50,7 +50,7 @@ CREATE TABLE `Notification` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Accounts` ADD CONSTRAINT `Accounts_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Accounts` ADD CONSTRAINT `Accounts_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Transaction` ADD CONSTRAINT `Transaction_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
