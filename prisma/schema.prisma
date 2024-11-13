@@ -15,17 +15,17 @@ datasource db {
 
 model Accounts {
   id  Int @id @default(autoincrement())
-  user_id Int
-  account_number String
+  userId Int
+  accountNumber String
   balance BigInt
-  user User  @relation(references: [id],fields: [user_id])
+  user User  @relation(references: [id],fields: [userId])
 
   Transaction Transaction[]
 }
 model User {
   id                Int       @id @default(autoincrement())
-  fullname          String
-  username          String    @unique
+  fullName          String
+  userName          String    @unique
   phone             String
   email             String    @unique
   password          String
