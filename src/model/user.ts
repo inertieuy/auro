@@ -1,18 +1,28 @@
-export interface UserData {
-  Id: Number;
-  FullName: string;
-  Phone: String;
-  Username: string;
+export interface IUserCache {
+  id: number;
+  fullName: string;
+  userName: string;
+  phone: string;
+  email: string;
+  password: string;
+  email_verified_at: Date | null;
 }
 
-export interface UserRegisterReq {
-  FullName: string;
-  Phone: string;
-  Email: string;
-  Username: string;
-  Password: string;
+export interface IUserData {
+  id: number;
+  fullName: string;
+  phone: string;
+  userName: string;
 }
 
-export interface UserRegisterRes {
-  ReferenceId: string;
+export interface IUserRegisterReq {
+  fullName: string;
+  phone: string;
+  email: string;
+  userName: string;
+  password: string;
+}
+
+export interface IUserRegisterRes {
+  referenceId: string;
 }

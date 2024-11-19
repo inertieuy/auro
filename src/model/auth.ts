@@ -1,7 +1,7 @@
-export interface AuthReq {
-  username: string;
+export interface IAuthReq {
+  userName: string;
   password: string;
 }
-export interface AuthRes {
-  Token: string;
+export interface IAuthRes {
+  token: string;
 }
