@@ -1,19 +1,17 @@
-import { prisma } from '../client';
+import { prisma } from '../client/prisma';
 import {
   IUserCache,
   IUserData,
   IUserRegisterReq,
   IUserRegisterRes,
 } from '../model/user';
-import { IValidateOtp } from '../model/validate_otp';
+import { IValidateOtpReq } from '../model/validate_otp';
 import { IAuthReq, IAuthRes } from '../model/auth';
-import { HTTPException } from 'hono/dist/types/http-exception';
+import { HTTPException } from 'hono/http-exception';
 import { Generator } from '../util/generator';
 import { UserValidation } from '../validation/user';
 
-const cacheUser = new Map<string, any>();
-
-class user {
+export class UserService {
   static async Authenticate(req: IAuthReq): Promise<IAuthRes> {
     const auth = UserValidation.AUTH.parse(req);
 
@@ -35,9 +33,10 @@ class user {
     }
 
     const isPassValid = await Bun.password.verify(
-      userCount.password,
       req.password,
+      userCount.password,
     );
+
     if (!isPassValid) {
       throw new HTTPException(400, {
         message: 'credential not valid',
@@ -46,7 +45,7 @@ class user {
 
     const token = Generator.genString(16);
 
-    cacheUser.set('user' + token, userCount);
+    // await client.set('user' + token, userCount);
 
     return {
       token: token,
@@ -54,21 +53,22 @@ class user {
   }
 
   static async ValidateToken(token: string): Promise<IUserData> {
-    const userCache: IUserCache = cacheUser.get('user' + token);
-    if (!userCache) {
-      throw new HTTPException(400, {
-        message: 'user not found',
-      });
-    }
-    const userData: IUserCache = userCache;
-
-    return {
-      id: userData.id,
-      fullName: userData.fullName,
-      phone: userData.phone,
-      userName: userData.userName,
-    };
+    // const userCache: IUserCache = await client.get('user' + token);
+    // if (!userCache) {
+    //   throw new HTTPException(400, {
+    //     message: 'user not found',
+    //   });
+    // }
+    // const userData: IUserCache = userCache;
+    //
+    // return {
+    //   id: userData.id,
+    //   fullName: userData.fullName,
+    //   phone: userData.phone,
+    //   userName: userData.userName,
+    // };
   }
+
   static async register(req: IUserRegisterReq): Promise<IUserRegisterRes> {
     const request = UserValidation.REGISTER.parse(req);
 
@@ -83,7 +83,7 @@ class user {
       });
     }
 
-    request.password = Bun.password.hash(req.password, {
+    request.password = await Bun.password.hash(req.password, {
       algorithm: 'bcrypt',
       cost: 10,
     });
@@ -95,41 +95,76 @@ class user {
     const otpCode = Generator.genNumber(4);
     const referenceId = Generator.genString(16);
 
-    cacheUser.set('otp' + referenceId, otpCode);
-    cacheUser.set('user-ref' + referenceId, request.username);
+    // console.log('Saving OTP to cache:', 'otp' + referenceId, otpCode);
+    // console.log(
+    //   'Saving user-ref to cache:',
+    //   'user-ref' + referenceId,
+    //   request.userName,
+    // );
+    // await client.set('otp' + referenceId, otpCode, { expires: 600 });
+    // await client.set('user-ref' + referenceId, request.userName, {
+    //   expires: 600,
+    // });
+
+    otpStore.set(referenceId, {
+      userName: request.userName,
+      otp: otpCode,
+      expiresAt: new Date(Date.now() + 60 * 1000),
+    });
+
+    console.log(`OTP for ${referenceId} is ${otpCode}`);
+    console.log('Saved to Map:', referenceId, otpStore.get(referenceId));
 
     return {
       referenceId: referenceId,
     };
   }
-  static async ValidateOtp(req: IValidateOtp): Promise<void> {
-    const otp = String(cacheUser.get('otp' + req.referenceId));
-    if (!otp) {
+  static async ValidateOtp(req: IValidateOtpReq): Promise<void> {
+    // const otp = await client.get('otp' + req.referenceId);
+    // if (!otp) {
+    //   throw new HTTPException(400, {
+    //     message: 'otp not found',
+    //   });
+    // }
+    //
+    // const value = await client.get('user-ref' + req.referenceId);
+    // if (!value) {
+    //   throw new HTTPException(400, {
+    //     message: 'user-ref not found',
+    //   });
+    // }
+
+    if (!otpRecord) {
       throw new HTTPException(400, {
         message: 'otp not found',
       });
     }
 
-    const value = String(cacheUser.get('user-ref' + req.referenceId));
-    if (!value) {
+    if (new Date() > otpRecord.expiresAt) {
       throw new HTTPException(400, {
-        message: 'user-ref not found',
+        message: 'expiresAt exceeded',
       });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        userName: value,
+        userName: otpRecord.userName,
       },
     });
-
-    user!.email_verified_at = new Date();
+    if (!user) {
+      throw new HTTPException(404, {
+        message: 'User not found',
+      });
+    }
 
     await prisma.user.update({
       where: {
-        userName: value,
+        userName: otpRecord.userName,
       },
-      data: user!,
+      data: {
+        email_verified_at: new Date(),
+      },
     });
+    otpStore.delete(req.referenceId);
   }
 }

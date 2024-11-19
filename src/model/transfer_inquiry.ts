@@ -1,12 +1,12 @@
-export interface TransferInquiryReq {
-  AccountNumber: string;
-  Amount: string;
+export interface ITransferInquiryReq {
+  accountNumber: string;
+  amount: string;
 }
 
-export interface TransferInquiryRes {
-  InquiryKey: string;
+export interface ITransferInquiryRes {
+  inquiryKey: string;
 }
 
-export interface TransactionExecuteReq {
-  InquiryKey: string;
+export interface ITransactionExecuteReq {
+  inquiryKey: string;
 }

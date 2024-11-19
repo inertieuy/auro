@@ -1,4 +1,4 @@
-export interface IValidateOtp {
-  ReferenceId: string;
-  OTP: string;
+export interface IValidateOtpReq {
+  referenceId: string;
+  otp: string;
 }

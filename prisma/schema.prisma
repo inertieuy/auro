@@ -14,14 +14,15 @@ datasource db {
 }
 
 model Accounts {
-  id  Int @id @default(autoincrement())
-  userId Int
+  id            Int    @id @default(autoincrement())
+  userId        Int
   accountNumber String
-  balance BigInt
-  user User  @relation(references: [id],fields: [userId])
+  balance       BigInt
+  user          User   @relation(references: [id], fields: [userId])
 
   Transaction Transaction[]
 }
+
 model User {
   id                Int       @id @default(autoincrement())
   fullName          String
@@ -37,25 +38,31 @@ model User {
 }
 
 model Transaction {
-  id                  Int       @id @default(autoincrement())
+  id                  Int      @id @default(autoincrement())
   accountId           Int
   amount              Float
   sofNumber           String
   dofNumber           String
   transactionType     String
   transactionDateTime DateTime
-  account             Accounts   @relation(fields: [accountId], references: [id])
-
+  account             Accounts @relation(fields: [accountId], references: [id])
 }
 
 model Notification {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
   title     String
   body      String
   status    Int
   isRead    Int
-  createdAt DateTime  @default(now())
-  user User @relation(references: [id],fields: [userId])
+  createdAt DateTime @default(now())
+  user      User     @relation(references: [id], fields: [userId])
 }
 
+model OTP {
+  id        String   @id @default(uuid())
+  userName  String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
