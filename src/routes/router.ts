@@ -15,10 +15,10 @@ app.use(
     secret: Bun.env.JWT_SECRET as string,
   }),
 );
-app.get('/users/page', (c) => {
+app.get('/users/check', (c) => {
   const payload = c.get('jwtPayload');
   return c.json({ payload });
 });
-app.get('/users/hello', UserHandler.hello);
-app.post('/users/transfer', TransactionHandler.TransferCek);
+app.post('/users/transaction', TransactionHandler.TransactionInquiry);
+
 export default app;

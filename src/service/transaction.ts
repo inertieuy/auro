@@ -8,7 +8,7 @@ import { Generator } from '../util/generator';
 import { v4 as uuidv4 } from 'uuid';
 
 export class TransactionService {
-  static async TransferInquiry(
+  static async TransactionInquiry(
     jwtPayload: { id: string; userName: string },
     req: ITransferInquiryReq,
   ): Promise<ITransferInquiryRes> {
