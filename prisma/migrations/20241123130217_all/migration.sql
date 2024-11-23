@@ -1,16 +1,32 @@
 -- CreateTable
 CREATE TABLE `Accounts` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
-    `accountNumber` VARCHAR(191) NOT NULL,
-    `balance` BIGINT NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `accountName` VARCHAR(191) NOT NULL,
+    `balance` DOUBLE NOT NULL,
 
+    UNIQUE INDEX `Accounts_userId_key`(`userId`),
+    UNIQUE INDEX `Accounts_accountName_key`(`accountName`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TransactionInquiry` (
+    `id` VARCHAR(191) NOT NULL,
+    `inquiryKey` VARCHAR(191) NOT NULL,
+    `txName` VARCHAR(191) NOT NULL,
+    `rxName` VARCHAR(191) NOT NULL,
+    `amount` DOUBLE NOT NULL,
+    `expiredAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `TransactionInquiry_id_key`(`id`),
+    UNIQUE INDEX `TransactionInquiry_inquiryKey_key`(`inquiryKey`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `User` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `fullName` VARCHAR(191) NOT NULL,
     `userName` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
@@ -18,6 +34,7 @@ CREATE TABLE `User` (
     `password` VARCHAR(191) NOT NULL,
     `email_verified_at` DATETIME(3) NULL,
 
+    UNIQUE INDEX `User_id_key`(`id`),
     UNIQUE INDEX `User_userName_key`(`userName`),
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -25,27 +42,42 @@ CREATE TABLE `User` (
 
 -- CreateTable
 CREATE TABLE `Transaction` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `accountId` INTEGER NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
     `amount` DOUBLE NOT NULL,
     `sofNumber` VARCHAR(191) NOT NULL,
     `dofNumber` VARCHAR(191) NOT NULL,
     `transactionType` VARCHAR(191) NOT NULL,
     `transactionDateTime` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `Transaction_id_key`(`id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Notification` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `body` VARCHAR(191) NOT NULL,
     `status` INTEGER NOT NULL,
     `isRead` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Notification_id_key`(`id`),
+    UNIQUE INDEX `Notification_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `OTP` (
+    `id` VARCHAR(191) NOT NULL,
+    `userName` VARCHAR(191) NOT NULL,
+    `otp` VARCHAR(191) NOT NULL,
+    `expiredAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `OTP_id_key`(`id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

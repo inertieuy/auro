@@ -3,7 +3,7 @@ import { etag } from 'hono/etag';
 import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
 import { cors } from 'hono/cors';
-import apiRouter from './routes/router';
+import apiRouter from './src/routes/router';
 
 const app = new Hono();
 

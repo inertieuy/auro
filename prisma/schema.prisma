@@ -14,17 +14,26 @@ datasource db {
 }
 
 model Accounts {
-  id            Int    @id @default(autoincrement())
-  userId        Int
-  accountNumber String
-  balance       BigInt
-  user          User   @relation(references: [id], fields: [userId])
+  id          String @id @default(uuid())
+  userId      String @unique
+  accountName String @unique
+  balance     Float
+  user        User   @relation(references: [id], fields: [userId])
 
   Transaction Transaction[]
 }
 
+model TransactionInquiry {
+  id         String   @id @unique
+  inquiryKey String   @unique
+  txName     String
+  rxName     String
+  amount     Float
+  expiredAt  DateTime
+}
+
 model User {
-  id                Int       @id @default(autoincrement())
+  id                String    @id @unique
   fullName          String
   userName          String    @unique
   phone             String
@@ -38,8 +47,8 @@ model User {
 }
 
 model Transaction {
-  id                  Int      @id @default(autoincrement())
-  accountId           Int
+  id                  String   @id @unique
+  accountId           String
   amount              Float
   sofNumber           String
   dofNumber           String
@@ -49,8 +58,8 @@ model Transaction {
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int
+  id        String   @id @unique
+  userId    String   @unique
   title     String
   body      String
   status    Int
@@ -60,9 +69,9 @@ model Notification {
 }
 
 model OTP {
-  id        String   @id @default(uuid())
+  id        String   @id @unique
   userName  String
   otp       String
-  expiresAt DateTime
+  expiredAt DateTime
   createdAt DateTime @default(now())
 }

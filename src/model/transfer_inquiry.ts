@@ -1,6 +1,6 @@
 export interface ITransferInquiryReq {
-  accountNumber: string;
-  amount: string;
+  accountName: string;
+  amount: number;
 }
 
 export interface ITransferInquiryRes {

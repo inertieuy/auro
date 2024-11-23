@@ -33,10 +33,7 @@ export class UserHandler {
       }
     }
   }
-  static async validateToken(c: Context) {
-    const user = c.get(`user`);
-    return c.json({ user }, 200);
-  }
+
   static async registerUser(c: Context) {
     try {
       const req: IUserRegisterReq = await c.req.json();
@@ -64,10 +61,19 @@ export class UserHandler {
 
       await UserService.ValidateOtp(req);
 
-      return c.status(200);
+      return c.json(
+        {
+          message: 'OTP registered',
+        },
+        200,
+      );
     } catch (err) {
       console.error(err);
       return c.status(500);
     }
+  }
+
+  static async hello(c: Context) {
+    return c.json({ message: 'Hello' }, 200);
   }
 }

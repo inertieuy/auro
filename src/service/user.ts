@@ -1,15 +1,12 @@
 import { prisma } from '../client/prisma';
-import {
-  IUserCache,
-  IUserData,
-  IUserRegisterReq,
-  IUserRegisterRes,
-} from '../model/user';
+import { IUserRegisterReq, IUserRegisterRes } from '../model/user';
 import { IValidateOtpReq } from '../model/validate_otp';
 import { IAuthReq, IAuthRes } from '../model/auth';
 import { HTTPException } from 'hono/http-exception';
 import { Generator } from '../util/generator';
 import { UserValidation } from '../validation/user';
+import { sign } from 'hono/jwt';
+import { v4 as uuidv4 } from 'uuid';
 
 export class UserService {
   static async Authenticate(req: IAuthReq): Promise<IAuthRes> {
@@ -43,30 +40,20 @@ export class UserService {
       });
     }
 
-    const token = Generator.genString(16);
-
-    // await client.set('user' + token, userCount);
+    const secret = (await Bun.env.JWT_SECRET) as string;
+    const token = await sign(
+      {
+        id: userCount.id,
+        userName: userCount.userName,
+        exp: Math.floor(Date.now() / 1000 + 60 * 60 * 5),
+      },
+      secret,
+      'HS256',
+    );
 
     return {
       token: token,
     };
-  }
-
-  static async ValidateToken(token: string): Promise<IUserData> {
-    // const userCache: IUserCache = await client.get('user' + token);
-    // if (!userCache) {
-    //   throw new HTTPException(400, {
-    //     message: 'user not found',
-    //   });
-    // }
-    // const userData: IUserCache = userCache;
-    //
-    // return {
-    //   id: userData.id,
-    //   fullName: userData.fullName,
-    //   phone: userData.phone,
-    //   userName: userData.userName,
-    // };
   }
 
   static async register(req: IUserRegisterReq): Promise<IUserRegisterRes> {
@@ -83,81 +70,60 @@ export class UserService {
       });
     }
 
+    request.id = uuidv4();
     request.password = await Bun.password.hash(req.password, {
       algorithm: 'bcrypt',
       cost: 10,
     });
 
-    const insert = await prisma.user.create({
+    await prisma.user.create({
       data: request,
     });
 
     const otpCode = Generator.genNumber(4);
     const referenceId = Generator.genString(16);
 
-    // console.log('Saving OTP to cache:', 'otp' + referenceId, otpCode);
-    // console.log(
-    //   'Saving user-ref to cache:',
-    //   'user-ref' + referenceId,
-    //   request.userName,
-    // );
-    // await client.set('otp' + referenceId, otpCode, { expires: 600 });
-    // await client.set('user-ref' + referenceId, request.userName, {
-    //   expires: 600,
-    // });
-
-    otpStore.set(referenceId, {
-      userName: request.userName,
-      otp: otpCode,
-      expiresAt: new Date(Date.now() + 60 * 1000),
+    await prisma.oTP.create({
+      data: {
+        id: referenceId,
+        userName: request.userName,
+        otp: otpCode,
+        expiredAt: new Date(Date.now() + 60 * 1000),
+      },
     });
 
     console.log(`OTP for ${referenceId} is ${otpCode}`);
-    console.log('Saved to Map:', referenceId, otpStore.get(referenceId));
 
     return {
       referenceId: referenceId,
     };
   }
-  static async ValidateOtp(req: IValidateOtpReq): Promise<void> {
-    // const otp = await client.get('otp' + req.referenceId);
-    // if (!otp) {
-    //   throw new HTTPException(400, {
-    //     message: 'otp not found',
-    //   });
-    // }
-    //
-    // const value = await client.get('user-ref' + req.referenceId);
-    // if (!value) {
-    //   throw new HTTPException(400, {
-    //     message: 'user-ref not found',
-    //   });
-    // }
 
+  static async ValidateOtp(req: IValidateOtpReq): Promise<void> {
+    const otpRecord = await prisma.oTP.findUnique({
+      where: {
+        id: req.referenceId,
+      },
+    });
     if (!otpRecord) {
       throw new HTTPException(400, {
         message: 'otp not found',
       });
     }
 
-    if (new Date() > otpRecord.expiresAt) {
+    if (new Date() > otpRecord.expiredAt) {
       throw new HTTPException(400, {
-        message: 'expiresAt exceeded',
+        message: 'otp expired',
       });
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        userName: otpRecord.userName,
-      },
-    });
-    if (!user) {
-      throw new HTTPException(404, {
-        message: 'User not found',
+    if (otpRecord.otp !== req.otp) {
+      throw new HTTPException(400, {
+        message: 'otp invalid',
       });
     }
 
-    await prisma.user.update({
+    const user = await prisma.user.update({
       where: {
         userName: otpRecord.userName,
       },
@@ -165,6 +131,19 @@ export class UserService {
         email_verified_at: new Date(),
       },
     });
-    otpStore.delete(req.referenceId);
+
+    await prisma.accounts.create({
+      data: {
+        userId: user.id,
+        accountName: user.userName,
+        balance: 0,
+      },
+    });
+    await prisma.oTP.delete({
+      where: {
+        id: req.referenceId,
+      },
+    });
+    console.log(`OTP for ${req.referenceId} has been validated and deleted.`);
   }
 }
