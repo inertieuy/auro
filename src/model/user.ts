@@ -8,6 +8,9 @@ export interface IUserCache {
   email_verified_at: Date | null;
 }
 
+export interface IToken {
+  token: string;
+}
 export interface IUserData {
   id: number;
   fullName: string;
