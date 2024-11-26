@@ -4,7 +4,7 @@ import { ITransactionExecuteReq } from '../model/transfer_inquiry';
 import { HTTPException } from 'hono/http-exception';
 
 export class TransactionHandler {
-  static async TransactionInquiry(c: Context) {
+  static async transactionInquiry(c: Context) {
     try {
       const jwtPayload = c.get('jwtPayload');
       const req = await c.req.json();
@@ -25,7 +25,7 @@ export class TransactionHandler {
     }
   }
 
-  static async TransactionExecute(c: Context) {
+  static async transactionExecute(c: Context) {
     try {
       const req: ITransactionExecuteReq = await c.req.json();
 

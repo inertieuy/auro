@@ -69,11 +69,44 @@ export class UserHandler {
       );
     } catch (err) {
       console.error(err);
-      return c.status(500);
+
+      if (err instanceof HTTPException) {
+        const { status, message } = err;
+        return c.json(
+          {
+            error: message || 'An error occurred',
+          },
+          status || 400,
+        );
+      }
     }
   }
 
   static async hello(c: Context) {
-    return c.json({ message: 'Hello' }, 200);
+    const payload = c.get('jwtPayload');
+    return c.json({ payload }, 200);
+  }
+
+  static async readNotification(c: Context) {
+    try {
+      const { notificationId } = c.req.param();
+      const payload = c.get('jwtPayload');
+
+      await UserService.ReadNotification(notificationId, payload.id);
+
+      return c.json({ message: 'notification sudah dibaca' }, 200);
+    } catch (err) {
+      console.error(err);
+
+      if (err instanceof HTTPException) {
+        const { status, message } = err;
+        return c.json(
+          {
+            error: message || 'An error occurred',
+          },
+          status || 400,
+        );
+      }
+    }
   }
 }
