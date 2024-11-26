@@ -111,7 +111,7 @@ export class UserService {
       });
     }
 
-    if (new Date() > otpRecord.expiredAt) {
+    if (new Date() >= otpRecord.expiredAt) {
       throw new HTTPException(400, {
         message: 'otp expired',
       });

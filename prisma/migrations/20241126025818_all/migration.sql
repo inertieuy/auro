@@ -45,8 +45,8 @@ CREATE TABLE `Transaction` (
     `id` VARCHAR(191) NOT NULL,
     `accountId` VARCHAR(191) NOT NULL,
     `amount` DOUBLE NOT NULL,
-    `sofNumber` VARCHAR(191) NOT NULL,
-    `dofNumber` VARCHAR(191) NOT NULL,
+    `txName` VARCHAR(191) NOT NULL,
+    `rxName` VARCHAR(191) NOT NULL,
     `transactionType` VARCHAR(191) NOT NULL,
     `transactionDateTime` DATETIME(3) NOT NULL,
 
