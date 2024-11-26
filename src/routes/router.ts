@@ -19,6 +19,7 @@ app.get('/users/check', (c) => {
   const payload = c.get('jwtPayload');
   return c.json({ payload });
 });
-app.post('/users/transaction', TransactionHandler.TransactionInquiry);
+app.post('/users/transaction/inquiry', TransactionHandler.TransactionInquiry);
+app.post('/users/transaction/execute', TransactionHandler.TransactionExecute);
 
 export default app;

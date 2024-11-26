@@ -13,25 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Accounts {
-  id          String @id @default(uuid())
-  userId      String @unique
-  accountName String @unique
-  balance     Float
-  user        User   @relation(references: [id], fields: [userId])
-
-  Transaction Transaction[]
-}
-
-model TransactionInquiry {
-  id         String   @id @unique
-  inquiryKey String   @unique
-  txName     String
-  rxName     String
-  amount     Float
-  expiredAt  DateTime
-}
-
 model User {
   id                String    @id @unique
   fullName          String
@@ -46,15 +27,30 @@ model User {
   Accounts Accounts[]
 }
 
+model Accounts {
+  id          String @id @default(uuid())
+  userId      String @unique
+  accountName String @unique
+  balance     Float
+  user        User   @relation(references: [id], fields: [userId])
+}
+
 model Transaction {
   id                  String   @id @unique
-  accountId           String
+  txaccountId         String
+  rxaccountId         String
   amount              Float
-  sofNumber           String
-  dofNumber           String
   transactionType     String
   transactionDateTime DateTime
-  account             Accounts @relation(fields: [accountId], references: [id])
+}
+
+model TransactionInquiry {
+  id         String   @id @unique
+  inquiryKey String   @unique
+  txName     String
+  rxName     String
+  amount     Float
+  expiredAt  DateTime
 }
 
 model Notification {
