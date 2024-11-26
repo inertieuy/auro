@@ -7,7 +7,7 @@ import {
 } from '../model/transfer_inquiry';
 import { Generator } from '../util/generator';
 import { v4 as uuidv4 } from 'uuid';
-import { IAccounts, IUserData } from '../model/user';
+import { IAccounts } from '../model/user';
 
 export class TransactionService {
   static async TransactionInquiry(
@@ -156,27 +156,27 @@ export class TransactionService {
     rx: IAccounts,
     amount: number,
   ): Promise<void> {
-    await prisma.notification.create({
-      data: {
-        id: uuidv4(),
-        userId: tx.userId,
-        title: 'transfer sukses',
-        body: `transfer senilai ${amount.toFixed(2)} berhasil dikirim`,
-        status: 1,
-        isRead: 0,
-        createdAt: new Date(),
-      },
-    });
-    await prisma.notification.create({
-      data: {
-        id: uuidv4(),
-        userId: rx.userId,
-        title: 'dana diterima',
-        body: `dana sebesar ${amount.toFixed(2)} berhasil diterima`,
-        status: 1,
-        isRead: 0,
-        createdAt: new Date(),
-      },
+    await prisma.notification.createMany({
+      data: [
+        {
+          id: uuidv4(),
+          userId: tx.userId,
+          title: 'transfer sukses',
+          body: `transfer senilai ${amount.toFixed(2)} berhasil dikirim`,
+          status: 1,
+          isRead: 0,
+          createdAt: new Date(),
+        },
+        {
+          id: uuidv4(),
+          userId: rx.userId,
+          title: 'dana diterima',
+          body: `dana sebesar ${amount.toFixed(2)} berhasil diterima`,
+          status: 1,
+          isRead: 0,
+          createdAt: new Date(),
+        },
+      ],
     });
   }
 }

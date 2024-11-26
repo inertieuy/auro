@@ -146,4 +146,30 @@ export class UserService {
     });
     console.log(`OTP for ${req.referenceId} has been validated and deleted.`);
   }
+
+  static async ReadNotification(
+    notificationId: string,
+    userId: string,
+  ): Promise<void> {
+    const findNotif = await prisma.notification.findFirst({
+      where: {
+        id: notificationId,
+        userId: userId,
+      },
+    });
+    if (!findNotif) {
+      throw new HTTPException(400, {
+        message: 'notification not found',
+      });
+    }
+
+    await prisma.notification.update({
+      where: {
+        id: notificationId,
+      },
+      data: {
+        isRead: 1,
+      },
+    });
+  }
 }

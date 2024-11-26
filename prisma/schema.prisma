@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id                String    @id @unique
+  id                String    @id
   fullName          String
   userName          String    @unique
   phone             String
@@ -36,7 +36,7 @@ model Accounts {
 }
 
 model Transaction {
-  id                  String   @id @unique
+  id                  String   @id
   txaccountId         String
   rxaccountId         String
   amount              Float
@@ -45,7 +45,7 @@ model Transaction {
 }
 
 model TransactionInquiry {
-  id         String   @id @unique
+  id         String   @id
   inquiryKey String   @unique
   txName     String
   rxName     String
@@ -54,8 +54,8 @@ model TransactionInquiry {
 }
 
 model Notification {
-  id        String   @id @unique
-  userId    String   @unique
+  id        String   @id
+  userId    String
   title     String
   body      String
   status    Int
@@ -65,7 +65,7 @@ model Notification {
 }
 
 model OTP {
-  id        String   @id @unique
+  id        String   @id
   userName  String
   otp       String
   expiredAt DateTime
