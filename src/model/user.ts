@@ -1,16 +1,10 @@
-export interface IUserCache {
-  id: number;
-  fullName: string;
-  userName: string;
-  phone: string;
-  email: string;
-  password: string;
-  email_verified_at: Date | null;
+export interface IAccounts {
+  id: string;
+  userId: string;
+  accountName: string;
+  balance: number;
 }
 
-export interface IToken {
-  token: string;
-}
 export interface IUserData {
   id: number;
   fullName: string;
