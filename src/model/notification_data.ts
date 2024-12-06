@@ -1,12 +1,8 @@
 export interface INotificationData {
-  id: number;
+  id: string;
   title: string;
   body: string;
-  status: Number;
-  isRead: Number;
+  status: number;
+  isRead: number;
   createdAt: Date;
-}
-
-export interface IHub {
-  notificationChannel: Record<number, INotificationData[]>;
 }

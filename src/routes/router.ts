@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { UserHandler } from '../handler/user';
 import { TransactionHandler } from '../handler/transaction';
+import { SSENotification } from '../sse/notification';
 import { jwt } from 'hono/jwt';
 
 const app = new Hono();
@@ -15,11 +16,12 @@ app.use(
     secret: Bun.env.JWT_SECRET as string,
   }),
 );
-app.get('/users/check', (c) => {
-  const payload = c.get('jwtPayload');
-  return c.json({ payload });
-});
-app.post('/users/transaction/inquiry', TransactionHandler.TransactionInquiry);
-app.post('/users/transaction/execute', TransactionHandler.TransactionExecute);
+app.get('/users/check', UserHandler.hello);
+app.put('/users/notification/:notificationId', UserHandler.readNotification);
+
+app.post('/users/transaction/inquiry', TransactionHandler.transactionInquiry);
+app.post('/users/transaction/execute', TransactionHandler.transactionExecute);
+
+app.get('/users/sse/notification-stream', SSENotification.streamNotification);
 
 export default app;

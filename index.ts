@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
 import { cors } from 'hono/cors';
 import apiRouter from './src/routes/router';
+import { streamSSE } from 'hono/streaming';
 
 const app = new Hono();
 
