@@ -22,8 +22,6 @@ model User {
   password          String
   email_verified_at DateTime?
 
-  Notification Notification[]
-
   Accounts Accounts[]
 }
 
@@ -33,6 +31,9 @@ model Accounts {
   accountName String @unique
   balance     Float
   user        User   @relation(references: [id], fields: [userId])
+
+  Notification Notification[]
+  TopUp        TopUp[]
 }
 
 model Transaction {
@@ -55,19 +56,29 @@ model TransactionInquiry {
 
 model Notification {
   id        String   @id
-  userId    String
+  accountId String
   title     String
   body      String
   status    Int
   isRead    Int
   createdAt DateTime @default(now())
-  user      User     @relation(references: [id], fields: [userId])
+  account   Accounts @relation(references: [id], fields: [accountId])
 }
 
 model OTP {
-  id        String   @id
-  userName  String
-  otp       String
-  expiredAt DateTime
-  createdAt DateTime @default(now())
+  id          String   @id
+  accountName String
+  otp         String
+  expiredAt   DateTime
+  createdAt   DateTime @default(now())
+}
+
+model TopUp {
+  id        String @id
+  accountId String
+  status    String
+  amount    Float
+  snapUrl   String
+
+  account Accounts @relation(references: [id], fields: [accountId])
 }

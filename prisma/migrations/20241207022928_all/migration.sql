@@ -8,7 +8,6 @@ CREATE TABLE `User` (
     `password` VARCHAR(191) NOT NULL,
     `email_verified_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `User_id_key`(`id`),
     UNIQUE INDEX `User_userName_key`(`userName`),
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -35,7 +34,6 @@ CREATE TABLE `Transaction` (
     `transactionType` VARCHAR(191) NOT NULL,
     `transactionDateTime` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Transaction_id_key`(`id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -48,7 +46,6 @@ CREATE TABLE `TransactionInquiry` (
     `amount` DOUBLE NOT NULL,
     `expiredAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `TransactionInquiry_id_key`(`id`),
     UNIQUE INDEX `TransactionInquiry_inquiryKey_key`(`inquiryKey`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -56,26 +53,35 @@ CREATE TABLE `TransactionInquiry` (
 -- CreateTable
 CREATE TABLE `Notification` (
     `id` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `body` VARCHAR(191) NOT NULL,
     `status` INTEGER NOT NULL,
     `isRead` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `Notification_id_key`(`id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `OTP` (
     `id` VARCHAR(191) NOT NULL,
-    `userName` VARCHAR(191) NOT NULL,
+    `accountName` VARCHAR(191) NOT NULL,
     `otp` VARCHAR(191) NOT NULL,
     `expiredAt` DATETIME(3) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `OTP_id_key`(`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TopUp` (
+    `id` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `amount` DOUBLE NOT NULL,
+    `snapUrl` VARCHAR(191) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -83,4 +89,7 @@ CREATE TABLE `OTP` (
 ALTER TABLE `Accounts` ADD CONSTRAINT `Accounts_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Notification` ADD CONSTRAINT `Notification_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TopUp` ADD CONSTRAINT `TopUp_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
