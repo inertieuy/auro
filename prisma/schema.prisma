@@ -76,7 +76,7 @@ model OTP {
 model TopUp {
   id        String @id
   accountId String
-  status    String
+  status    Int
   amount    Float
   snapUrl   String
 

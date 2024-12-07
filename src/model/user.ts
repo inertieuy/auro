@@ -4,14 +4,6 @@ export interface IAccounts {
   accountName: string;
   balance: number;
 }
-
-export interface IUserData {
-  id: number;
-  fullName: string;
-  phone: string;
-  userName: string;
-}
-
 export interface IUserRegisterReq {
   fullName: string;
   phone: string;

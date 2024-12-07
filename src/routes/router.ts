@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { UserHandler } from '../handler/user';
 import { TransactionHandler } from '../handler/transaction';
 import { SSENotification } from '../sse/notification';
+import { TopupHandler } from '../handler/topup';
+import { MidtransHandler } from '../handler/midtrans';
 import { jwt } from 'hono/jwt';
 
 const app = new Hono();
@@ -23,5 +25,11 @@ app.post('/users/transaction/inquiry', TransactionHandler.transactionInquiry);
 app.post('/users/transaction/execute', TransactionHandler.transactionExecute);
 
 app.get('/users/sse/notification-stream', SSENotification.streamNotification);
+
+app.post('/users/topup/initialize', TopupHandler.initializeTopUp);
+app.post(
+  '/midtrans/payment-callback',
+  MidtransHandler.paymentHandlerNotification,
+);
 
 export default app;
