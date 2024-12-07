@@ -10,13 +10,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { IAccounts } from '../model/user';
 
 export class TransactionService {
-  static async TransactionInquiry(
+  static async transactionInquiry(
     jwtPayload: { id: string; userName: string },
     req: ITransferInquiryReq,
   ): Promise<ITransferInquiryRes> {
     const txAcc = await prisma.accounts.findUnique({
       where: {
-        userId: jwtPayload.id,
+        id: jwtPayload.id,
       },
     });
 
@@ -66,7 +66,7 @@ export class TransactionService {
     };
   }
 
-  static async TransactionExecute(req: ITransactionExecuteReq): Promise<void> {
+  static async transactionExecute(req: ITransactionExecuteReq): Promise<void> {
     const val = await prisma.transactionInquiry.findUnique({
       where: {
         inquiryKey: req.inquiryKey,

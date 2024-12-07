@@ -9,7 +9,7 @@ import { sign } from 'hono/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
 export class UserService {
-  static async Authenticate(req: IAuthReq): Promise<IAuthRes> {
+  static async authenticate(req: IAuthReq): Promise<IAuthRes> {
     const auth = UserValidation.AUTH.parse(req);
 
     const userCount = await prisma.user.findUnique({
@@ -110,7 +110,7 @@ export class UserService {
     };
   }
 
-  static async ValidateOtp(req: IValidateOtpReq): Promise<void> {
+  static async validateOtp(req: IValidateOtpReq): Promise<void> {
     const otpRecord = await prisma.oTP.findUnique({
       where: {
         id: req.referenceId,
@@ -158,7 +158,7 @@ export class UserService {
     console.log(`OTP for ${req.referenceId} has been validated and deleted.`);
   }
 
-  static async ReadNotification(
+  static async readNotification(
     notificationId: string,
     accId: string,
   ): Promise<void> {

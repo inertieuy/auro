@@ -10,7 +10,7 @@ export class UserHandler {
     try {
       const req: IAuthReq = await c.req.json();
 
-      const token = await UserService.Authenticate(req);
+      const token = await UserService.authenticate(req);
       if (!token) {
         return c.json(
           {
@@ -59,7 +59,7 @@ export class UserHandler {
     try {
       const req: IValidateOtpReq = await c.req.json();
 
-      await UserService.ValidateOtp(req);
+      await UserService.validateOtp(req);
 
       return c.json(
         {
@@ -92,7 +92,7 @@ export class UserHandler {
       const { notificationId } = c.req.param();
       const payload = c.get('jwtPayload');
 
-      await UserService.ReadNotification(notificationId, payload.id);
+      await UserService.readNotification(notificationId, payload.id);
 
       return c.json({ message: 'notification sudah dibaca' }, 200);
     } catch (err) {

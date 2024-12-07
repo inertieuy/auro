@@ -1,15 +1,18 @@
 import { Context } from 'hono';
 import { TransactionService } from '../service/transaction';
-import { ITransactionExecuteReq } from '../model/transfer_inquiry';
+import {
+  ITransactionExecuteReq,
+  ITransferInquiryReq,
+} from '../model/transfer_inquiry';
 import { HTTPException } from 'hono/http-exception';
 
 export class TransactionHandler {
   static async transactionInquiry(c: Context) {
     try {
       const jwtPayload = c.get('jwtPayload');
-      const req = await c.req.json();
+      const req: ITransferInquiryReq = await c.req.json();
 
-      const tx = await TransactionService.TransactionInquiry(jwtPayload, req);
+      const tx = await TransactionService.transactionInquiry(jwtPayload, req);
       return c.json({ tx }, 200);
     } catch (err) {
       console.error(err);
@@ -29,7 +32,7 @@ export class TransactionHandler {
     try {
       const req: ITransactionExecuteReq = await c.req.json();
 
-      await TransactionService.TransactionExecute(req);
+      await TransactionService.transactionExecute(req);
       return c.json({ message: 'transfer succesfully' }, 200);
     } catch (err) {
       console.error(err);
