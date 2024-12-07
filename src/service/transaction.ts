@@ -21,7 +21,7 @@ export class TransactionService {
     });
 
     if (!txAcc) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'user id not found',
       });
     }
@@ -32,7 +32,7 @@ export class TransactionService {
       },
     });
     if (!rxAcc) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'account not found',
       });
     }
@@ -94,7 +94,7 @@ export class TransactionService {
       },
     });
     if (!txAcc) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'tx account not found',
       });
     }
@@ -104,7 +104,7 @@ export class TransactionService {
       },
     });
     if (!rxAcc) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'rx account not found',
       });
     }
@@ -159,7 +159,7 @@ export class TransactionService {
     const notifications = [
       {
         id: uuidv4(),
-        userId: tx.userId,
+        accountId: tx.id,
         title: 'transfer sukses',
         body: `transfer senilai ${amount.toFixed(2)} berhasil dikirim`,
         status: 1,
@@ -168,7 +168,7 @@ export class TransactionService {
       },
       {
         id: uuidv4(),
-        userId: rx.userId,
+        accountId: rx.id,
         title: 'dana diterima',
         body: `dana sebesar ${amount.toFixed(2)} berhasil diterima`,
         status: 1,

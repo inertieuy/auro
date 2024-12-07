@@ -18,7 +18,7 @@ export class UserService {
       },
     });
     if (!userCount) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'user not found',
       });
     }
@@ -40,10 +40,21 @@ export class UserService {
       });
     }
 
+    const accFind = await prisma.accounts.findUnique({
+      where: {
+        userId: userCount.id,
+      },
+    });
+    if (!accFind) {
+      throw new HTTPException(404, {
+        message: 'account not found',
+      });
+    }
     const secret = (await Bun.env.JWT_SECRET) as string;
+
     const token = await sign(
       {
-        id: userCount.id,
+        id: accFind.id,
         userName: userCount.userName,
         exp: Math.floor(Date.now() / 1000 + 60 * 60 * 5),
       },
@@ -86,7 +97,7 @@ export class UserService {
     await prisma.oTP.create({
       data: {
         id: referenceId,
-        userName: request.userName,
+        accountName: request.userName,
         otp: otpCode,
         expiredAt: new Date(Date.now() + 60 * 1000),
       },
@@ -106,7 +117,7 @@ export class UserService {
       },
     });
     if (!otpRecord) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'otp not found',
       });
     }
@@ -125,7 +136,7 @@ export class UserService {
 
     const user = await prisma.user.update({
       where: {
-        userName: otpRecord.userName,
+        userName: otpRecord.accountName,
       },
       data: {
         email_verified_at: new Date(),
@@ -149,16 +160,16 @@ export class UserService {
 
   static async ReadNotification(
     notificationId: string,
-    userId: string,
+    accId: string,
   ): Promise<void> {
     const findNotif = await prisma.notification.findFirst({
       where: {
         id: notificationId,
-        userId: userId,
+        accountId: accId,
       },
     });
     if (!findNotif) {
-      throw new HTTPException(400, {
+      throw new HTTPException(404, {
         message: 'notification not found',
       });
     }

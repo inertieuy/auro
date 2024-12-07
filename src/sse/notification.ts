@@ -9,7 +9,7 @@ export class SSENotification {
       console.log(payload);
       const latestNotif = await prisma.notification.findFirst({
         where: {
-          userId: payload.id,
+          accountId: payload.id,
         },
         orderBy: {
           createdAt: 'desc',
