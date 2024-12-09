@@ -30,7 +30,7 @@ export class UserService {
     }
 
     const isPassValid = await Bun.password.verify(
-      req.password,
+      auth.password,
       userCount.password,
     );
 
@@ -82,7 +82,7 @@ export class UserService {
     }
 
     request.id = uuidv4();
-    request.password = await Bun.password.hash(req.password, {
+    request.password = await Bun.password.hash(request.password, {
       algorithm: 'bcrypt',
       cost: 10,
     });

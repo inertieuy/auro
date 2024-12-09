@@ -3,8 +3,9 @@ import { TransactionService } from '../service/transaction';
 import {
   ITransactionExecuteReq,
   ITransferInquiryReq,
-} from '../model/transfer_inquiry';
+} from '../model/transaction';
 import { HTTPException } from 'hono/http-exception';
+import { PinService } from '../service/pin';
 
 export class TransactionHandler {
   static async transactionInquiry(c: Context) {
@@ -30,9 +31,12 @@ export class TransactionHandler {
 
   static async transactionExecute(c: Context) {
     try {
+      const payload = c.get('jwtPayload');
       const req: ITransactionExecuteReq = await c.req.json();
 
-      await TransactionService.transactionExecute(req);
+      await PinService.getPin(payload.id, req.pin);
+      await TransactionService.transactionExecute(req.inquiryKey);
+
       return c.json({ message: 'transfer succesfully' }, 200);
     } catch (err) {
       console.error(err);

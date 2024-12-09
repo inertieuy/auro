@@ -30,10 +30,12 @@ model Accounts {
   userId      String @unique
   accountName String @unique
   balance     Float
-  user        User   @relation(references: [id], fields: [userId])
+
+  user User @relation(references: [id], fields: [userId])
 
   Notification Notification[]
   TopUp        TopUp[]
+  Pin          Pin[]
 }
 
 model Transaction {
@@ -79,6 +81,14 @@ model TopUp {
   status    Int
   amount    Float
   snapUrl   String
+
+  account Accounts @relation(references: [id], fields: [accountId])
+}
+
+model Pin {
+  id        String @id
+  accountId String @unique
+  pin       String
 
   account Accounts @relation(references: [id], fields: [accountId])
 }
