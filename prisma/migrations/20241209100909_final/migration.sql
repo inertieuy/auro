@@ -78,10 +78,20 @@ CREATE TABLE `OTP` (
 CREATE TABLE `TopUp` (
     `id` VARCHAR(191) NOT NULL,
     `accountId` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `status` INTEGER NOT NULL,
     `amount` DOUBLE NOT NULL,
     `snapUrl` VARCHAR(191) NOT NULL,
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Pin` (
+    `id` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
+    `pin` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Pin_accountId_key`(`accountId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -93,3 +103,6 @@ ALTER TABLE `Notification` ADD CONSTRAINT `Notification_accountId_fkey` FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE `TopUp` ADD CONSTRAINT `TopUp_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Pin` ADD CONSTRAINT `Pin_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

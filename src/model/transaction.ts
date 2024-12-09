@@ -9,4 +9,5 @@ export interface ITransferInquiryRes {
 
 export interface ITransactionExecuteReq {
   inquiryKey: string;
+  pin: string;
 }

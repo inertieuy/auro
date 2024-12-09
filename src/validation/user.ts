@@ -13,4 +13,8 @@ export class UserValidation {
     userName: z.string().min(1).max(100),
     password: z.string().min(1).max(100),
   });
+
+  static readonly Pin: ZodType = z.object({
+    pin: z.string().min(5).max(10),
+  });
 }

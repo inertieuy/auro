@@ -4,7 +4,7 @@ import {
   ITransactionExecuteReq,
   ITransferInquiryReq,
   ITransferInquiryRes,
-} from '../model/transfer_inquiry';
+} from '../model/transaction';
 import { Generator } from '../util/generator';
 import { v4 as uuidv4 } from 'uuid';
 import { IAccounts } from '../model/user';
@@ -66,10 +66,10 @@ export class TransactionService {
     };
   }
 
-  static async transactionExecute(req: ITransactionExecuteReq): Promise<void> {
+  static async transactionExecute(req: string): Promise<void> {
     const val = await prisma.transactionInquiry.findUnique({
       where: {
-        inquiryKey: req.inquiryKey,
+        inquiryKey: req,
       },
     });
     if (!val) {
@@ -81,7 +81,7 @@ export class TransactionService {
     if (new Date() >= val.expiredAt) {
       await prisma.transactionInquiry.delete({
         where: {
-          inquiryKey: req.inquiryKey,
+          inquiryKey: req,
         },
       });
       throw new HTTPException(400, {
@@ -144,7 +144,7 @@ export class TransactionService {
 
     await prisma.transactionInquiry.delete({
       where: {
-        inquiryKey: req.inquiryKey,
+        inquiryKey: req,
       },
     });
 
